@@ -7,10 +7,14 @@ Every full issue analysis must include the following sections exactly or concept
 Required fields:
 - issue identifier and title
 - repository
+- verification outcome: issue verified, confirmed nonexistent, or inaccessible/ambiguous; cite the source and distinguish not-found evidence from access failure
+- issue state and closure metadata when available
 - problem summary
 - expected behavior
 - acceptance criteria
 - ambiguities
+
+If the issue is confirmed nonexistent, state that issue-specific analysis stopped. If inaccessible, record the access limitation and do not present issue details as verified. For a closed issue, include the closure context and resolution/rejection investigation; closed state alone is not a resolution verdict.
 
 ## 2. Pre-flight Verdict
 
@@ -74,6 +78,8 @@ Required fields:
 - proposed change
 - rationale
 - evidence
+
+The file-plan table must include the classification for every listed file. Include at least the applicable categories among `TOUCH`, `MAYBE`, `DON'T-TOUCH`, and `UNKNOWN`; do not invent a file solely to fill a category. A category may be omitted only when no file genuinely meets it, with that absence stated. For each row, provide evidence and rationale appropriate to its category: necessity for `TOUCH`, unresolved possibility for `MAYBE`, inspected basis for exclusion for `DON'T-TOUCH`, and the missing evidence/verification action for `UNKNOWN`.
 
 A table is recommended. `TOUCH` means supported as needed for the recommended approach; `MAYBE` means plausible but unverified; `DON'T-TOUCH` requires evidence that the file is unrelated or unnecessary; use `UNKNOWN` when access or dependency evidence is insufficient. Separate required edits from optional improvements.
 

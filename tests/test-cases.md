@@ -259,3 +259,33 @@ Each case below specifies the setup, expected findings, expected verdict or beha
 - Expected evidence: report and plan only; no file changes, branches, commits, comments, or PR operations.
 - Expected verdict or decision gate: complete analysis and explicitly state that execution requires a separate request; never treat planning readiness as authorization to modify a repository.
 - Common failure mode: interpreting `GO` as permission to implement or create a branch.
+
+## 41. Confirmed nonexistent issue
+- Setup: Repository identity is verified and an authoritative GitHub response confirms that the requested issue number does not exist.
+- Expected evidence: repository identity, attempted issue URL/number, source and response establishing not-found, and confirmation that the result is not an authorization or network failure.
+- Expected verdict or decision gate: report the target as confirmed nonexistent and stop issue-specific analysis; do not invent issue details or assign another status as though an issue were verified. If the report format requires a six-value verdict, use `UNKNOWN` and explain that target verification failed.
+- Common failure mode: treating a permission error as proof of nonexistence or continuing with a fabricated issue analysis.
+
+## 42. Inaccessible issue is not nonexistent
+- Setup: The issue URL returns an authorization, authentication, rate-limit, network, or unavailable-tool error; no authoritative not-found result is available.
+- Expected evidence: attempted source and access failure, repository identity if known, missing issue fields, and the effect on confidence.
+- Expected verdict or decision gate: classify the issue as inaccessible, not nonexistent. Use `UNKNOWN` if the missing issue evidence prevents a defensible status; request accessible details or access and do not claim issue state/content.
+- Common failure mode: labeling the issue nonexistent or `AVAILABLE` based only on failed access.
+
+## 43. Closed issue with verified merged resolution
+- Setup: The issue is confirmed closed, a merged PR/commit and current code implement its requested behavior, and available closure context is consistent.
+- Expected evidence: issue state/closure metadata, merged fix URL and commit, code evidence, and comparison with acceptance criteria; note any unavailable sources.
+- Expected verdict or decision gate: `ALREADY_RESOLVED`; do not recommend reimplementing the same fix. Suggest verifying any unmet criterion or investigating distinct follow-up work.
+- Common failure mode: assuming closure alone proves resolution or recommending a duplicate patch.
+
+## 44. Closed issue without established resolution or rejection
+- Setup: The issue is confirmed closed, but no fixing change is identified and the closure reason or prior PR feedback is absent or inconclusive.
+- Expected evidence: issue closure metadata, searches for linked/unlinked merged PRs, current code, replacement PRs and follow-ups, and explicit unavailable/inconclusive sources.
+- Expected verdict or decision gate: use `UNKNOWN` when available evidence cannot establish resolution or rejection. State that closure alone is insufficient and do not recommend reimplementation as an available contribution.
+- Common failure mode: interpreting closed state as automatically resolved, rejected, abandoned, or available.
+
+## 45. Closed issue with documented rejection feedback
+- Setup: The issue is closed and a related prior PR has accessible substantive reviewer feedback that remains unaddressed; no replacement fix is found in adequately checked sources.
+- Expected evidence: issue closure state/reason, PR/review links, requested changes, author follow-up, unresolved concerns, replacement/resolution search scope, and limitations.
+- Expected verdict or decision gate: `PREVIOUSLY_REJECTED`; distinguish the closed issue from the prior PR outcome and state what a viable new attempt must change. Do not infer rejection from issue closure alone.
+- Common failure mode: treating every closed issue or closed PR as rejected without reviewing feedback and subsequent activity.

@@ -62,9 +62,12 @@ Illustrative audit date: `2026-02-03`.
 
 | File path | Confidence | Proposed change | Rationale | Evidence |
 | --- | --- | --- | --- | --- |
-| `src/config/loader.ts` | CONFIRMED | Add recursive normalization for nested JSON objects and preserve existing flat-key behavior. | The parser currently flattens structure and likely drops nested objects. | Issue description + parser code |
-| `tests/config.test.ts` | CONFIRMED | Add nested JSON parsing tests and invalid-input validation coverage. | Existing tests cover only flat config keys. | Current test file content |
-| `src/config/schema.ts` | LIKELY | Check if schema validation expects flat keys and update normalization if required. | Risk of nested values being rejected after parse. | Validation logic inspection |
+| Classification | File path | Confidence | Proposed change or verification | Rationale | Evidence |
+| `TOUCH` | `src/config/loader.ts` | `MEDIUM` | Add recursive handling for nested JSON while preserving flat-key behavior, subject to readiness gates. | The illustrative parser path is the likely implementation point. | Illustrative issue criteria and inspected parser behavior |
+| `TOUCH` | `tests/config.test.ts` | `MEDIUM` | Add nested-input regression coverage and test invalid input if required by verified criteria. | Existing illustrative tests cover flat keys only. | Illustrative test-file inspection |
+| `MAYBE` | `src/config/schema.ts` | `LOW` | Verify whether schema normalization must change; do not edit unless evidence shows it is needed. | It may reject nested values after parsing. | Illustrative parser-to-schema path; schema behavior requires confirmation |
+| `DON'T-TOUCH` | `src/network/client.ts` | `MEDIUM` | No change proposed. | The inspected illustrative path does not use the network client for local config parsing. | Illustrative dependency-path inspection |
+| `UNKNOWN` | `src/generated/config-types.ts` | `LOW` | Check generator/source policy and generated consumers before deciding. | Generator involvement was not accessible in this illustration. | Explicitly unperformed generator inspection |
 
 ## 6. Implementation Sequence
 
@@ -94,7 +97,7 @@ Illustrative audit date: `2026-02-03`.
 | Risk | Severity | Evidence | Impact | Mitigation |
 | --- | --- | --- | --- | --- |
 | Active competing PR | MEDIUM | Open PR #920 with overlapping file edits | Parallel work may duplicate effort or conflict | Check if the work is already in progress and coordinate or avoid overlap |
-| Prior rejection feedback | MEDIUM | Previous PR #731 failed due to missing nested validation | Same bug class may still be rejected | Add validation and tests consistent with review feedback |
+| Prior incomplete attempt | MEDIUM | PR #731 was closed unmerged; the illustrative review history says array handling was added but invalid-input coverage remained absent, and the closure reason was not recorded | The earlier attempt does not establish rejection; unresolved requested coverage may matter to a new attempt | Verify the actual criteria and prior feedback; address the documented missing coverage if it remains required. Do not infer why the PR closed. |
 | Ambiguous acceptance criteria | LOW | Issue description does not say whether mixed flat/nested keys are accepted | Implementation could be rejected for scope mismatch | Clarify with maintainer or repo docs before broadening scope |
 
 ## 10. Final Readiness Assessment

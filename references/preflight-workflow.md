@@ -12,6 +12,15 @@ Before any repository read, establish:
 
 If the repository or issue cannot be identified, ask a concise clarification question and stop.
 
+### Verify issue existence, access, and state
+
+- Verify the repository identity and issue using available authorized sources before treating an issue as nonexistent.
+- If an authoritative response confirms that the issue does not exist, report the failed target verification and stop issue-specific analysis. Do not infer a six-verdict issue status about a nonexistent target; if the report format requires one, use `UNKNOWN` and explicitly say the target itself was not found.
+- Distinguish a confirmed nonexistent issue from an inaccessible issue. Permission errors, authentication failures, rate limits, network errors, unavailable tools, and ambiguous responses establish an access limitation, not nonexistence. Report which source failed and request accessible issue text/access when needed. Use `UNKNOWN` when that missing evidence prevents a defensible status; never invent issue facts.
+- For a closed issue, record its state and closure metadata when available, then investigate linked and unlinked merged PRs, current code, replacement PRs, follow-up issues, prior attempts/review feedback, and the recorded closure reason. A closed state alone does not establish resolution, rejection, abandonment, or lack of actionability.
+- Assign `ALREADY_RESOLVED` only when evidence shows the requested behavior is implemented. Assign `PREVIOUSLY_REJECTED` only when accessible feedback supports substantive rejection or unresolved concerns. If the closure reason or technical outcome is unavailable or inconclusive, use `UNKNOWN` when material, state the limitation, and do not recommend a duplicate implementation.
+- Keep the six issue-status values unchanged; existence/access/state findings are evidence and input-validation outcomes, not additional verdicts.
+
 ### Input and discovery bounds
 
 - For a specific issue, verify the repository and issue from available sources. A user-provided issue description is context, not independently verified GitHub metadata.

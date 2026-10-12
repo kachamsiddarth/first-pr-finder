@@ -4,6 +4,9 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 
 ## Pre-flight ordering
 - [ ] The skill confirms repo and issue context before inspecting code.
+- [ ] Confirmed nonexistent issues are distinguished from inaccessible issues; only verified not-found evidence supports “nonexistent.”
+- [ ] A confirmed nonexistent target stops issue-specific analysis; inaccessible targets disclose the limitation and use `UNKNOWN` when status cannot be determined.
+- [ ] Closed issues trigger resolution/rejection/closure-context investigation; closure alone is not treated as resolution.
 - [ ] User-supplied issue details are distinguished from independently verified GitHub facts.
 - [ ] Issue discovery is bounded to at most 30 open issues per pass and a shortlist of at most 5; actual scope and truncation are disclosed.
 - [ ] The skill does not jump directly from issue URL to file-level patch suggestions.
@@ -49,6 +52,9 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 ## File mapping accuracy
 - [ ] Relevant files are identified from repository evidence, not guessed.
 - [ ] Candidate files use `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN` with evidence and rationale.
+- [ ] The sample minimal file-change table includes classification, rationale, and category-appropriate evidence for each listed file.
+- [ ] The sample demonstrates `TOUCH`, `MAYBE`, `DON'T-TOUCH`, and `UNKNOWN`, with evidence/rationale matching each category.
+- [ ] The sample does not infer rejection or invent a closure reason for a prior closed PR.
 - [ ] `DON'T-TOUCH` is not assigned solely because a file was not investigated.
 - [ ] Proposed file changes are limited to the smallest plausible path.
 

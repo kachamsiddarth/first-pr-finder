@@ -9,30 +9,38 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 
 ## Ownership detection
 - [ ] The skill searches issue comments for explicit or implicit ownership signals.
-- [ ] The skill records author, timestamp, and claim type.
-- [ ] The skill checks for later activity or maintainer acknowledgment.
+- [ ] Each claim includes username, exact comment URL, timestamp, claim type, and subsequent activity.
+- [ ] The skill checks later comments, maintainer actions, linked PRs, commits/branch activity, reviews, and CI where accessible.
 - [ ] The skill distinguishes an interest statement from an assignment or active implementation.
+- [ ] An approximately three-month-old claim triggers a freshness warning, not automatic abandonment or availability.
 
 ## Timestamp accuracy
-- [ ] Claim age is calculated using actual timestamps and current date information.
-- [ ] Old claims trigger a freshness warning but are not declared abandoned automatically.
+- [ ] Claim age is calculated from actual timestamps and current date information.
+- [ ] Stale, current, and ambiguous ownership interpretations are evidence-backed.
 - [ ] Later comments and PR updates are incorporated into the final judgment.
 
 ## Duplicate detection
-- [ ] Linked and competing PRs are reviewed.
-- [ ] Similar work without issue numbers is considered when evidence exists.
+- [ ] Open linked PRs and issue-number/URL references in PR titles, bodies, and relevant comments are checked.
+- [ ] Similar open work without issue references is considered using behavior and overlapping files/functions.
+- [ ] Each relevant open PR reports available URL/number, state/draft status, author/timestamps, references/comments, changed files, and conflict rationale.
+- [ ] Conflicts are distinguished as confirmed, possible, or related/non-conflicting.
 - [ ] Duplicate claims are reported carefully without asserting exhaustive coverage.
 - [ ] Closed issues are distinguished from technically resolved issues.
+- [ ] Incomplete PR metadata is explicitly marked unavailable and its effect on the verdict is explained.
 
 ## Prior-PR rejection analysis
 - [ ] The skill inspects prior PR closure reasons instead of assuming all closures are equal.
+- [ ] Reviewer requests, author response, subsequent commits/review rounds, and CI are checked where accessible.
+- [ ] The skill states which requests were and were not addressed.
+- [ ] Prior attempts can be classified as rejected, abandoned/withdrawn, superseded, duplicated, incomplete, unexplained, resolved elsewhere, or unknown.
 - [ ] The skill explains what must be different in a new attempt.
 - [ ] Previously rejected work is not treated as harmless if the same concerns remain unresolved.
 
 ## Resolved-issue detection
-- [ ] The skill checks for merged PRs, later fixes, or a replacement implementation.
+- [ ] The skill checks linked and unlinked merged PRs, replacement PRs, follow-up issues, relevant commits, and current code where tools permit.
 - [ ] The skill distinguishes a closed issue from a technically resolved one.
-- [ ] The skill recommends verifying current code before proposing a duplicate implementation.
+- [ ] An `ALREADY_RESOLVED` verdict cites the fix and explicitly blocks recommendation to reimplement the same behavior.
+- [ ] When a resolution source cannot be checked, the limitation is stated rather than implied to have passed.
 
 ## File mapping accuracy
 - [ ] Relevant files are identified from repository evidence, not guessed.
@@ -59,6 +67,16 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 - [ ] Competing work and prior rejection feedback are represented explicitly.
 - [ ] Confidence reflects evidence quality and search coverage.
 
+## Verdict definitions and decision gates
+- [ ] `AVAILABLE` states what was checked, coverage limitations, and why the evidence supports availability.
+- [ ] `POTENTIALLY_CLAIMED` states the uncertainty and recommends checking with claimant/maintainer before overlap.
+- [ ] `ACTIVE_WORK` requires coordination or maintainer clarification before overlapping implementation.
+- [ ] `PREVIOUSLY_REJECTED` identifies unresolved feedback and what must change in a new attempt.
+- [ ] `ALREADY_RESOLVED` prohibits recommending reimplementation of the same fix.
+- [ ] `UNKNOWN` is used when evidence is insufficient/inaccessible/incomplete and does not assert availability or resolution.
+- [ ] Every verdict includes confidence, evidence/URLs, relevant timestamps, search scope/limitations, conflicts, and next action.
+- [ ] Pre-flight evidence and verdict precede any definitive implementation blueprint.
+
 ## Source evidence and confidence
 - [ ] Repository paths, symbols, and links are cited when available.
 - [ ] Inference is labeled as inference.
@@ -67,6 +85,7 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 ## Graceful degradation
 - [ ] The skill handles missing GitHub access without fabricating results.
 - [ ] The skill handles incomplete search coverage honestly.
+- [ ] Incomplete material search coverage yields `UNKNOWN` rather than an unsupported `AVAILABLE` or `ALREADY_RESOLVED`.
 - [ ] The report is still useful even when only partial evidence is available.
 
 ## Safety and read-only behavior

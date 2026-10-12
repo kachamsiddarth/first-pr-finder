@@ -2,6 +2,8 @@
 
 This file is an illustrative sample only. It does not describe a real repository or verified issue. It demonstrates the expected structure and reasoning pattern for a valid report.
 
+Illustrative audit date: `2026-02-03`.
+
 ## 1. Issue Overview
 
 - Issue identifier and title: `#812` — "Support nested JSON config in CLI parser"
@@ -19,26 +21,30 @@ This file is an illustrative sample only. It does not describe a real repository
 - Status: `POTENTIALLY_CLAIMED`
 - Confidence: `MEDIUM`
 - Evidence and links:
-  - Issue comment by `alice` at `2026-01-12T14:03:00Z`: “I’m working on this, likely have a PR next week.”
-  - Open pull request `#920` titled “Parse nested config objects” last updated `2026-02-01T23:40:00Z`.
-  - Maintainer comment at `2026-01-14T09:00:00Z`: “Thanks, but please check in with the parser owner before you proceed.”
+  - Issue comment by `alice` at `2026-01-12T14:03:00Z`: “I’m working on this, likely have a PR next week.” Illustrative URL: `https://github.com/example-org/example-cli/issues/812#issuecomment-1001`
+  - Open pull request `#920`, “Parse nested config objects,” last updated `2026-02-01T23:40:00Z`. Illustrative URL: `https://github.com/example-org/example-cli/pull/920`
+  - Maintainer comment at `2026-01-14T09:00:00Z`: “Thanks, but please check in with the parser owner before you proceed.” Illustrative URL: `https://github.com/example-org/example-cli/issues/812#issuecomment-1002`
 - Search coverage: Searched issue comments, open PRs, and nearby issues for references to `#812`. Search was limited to current repository metadata and public comments available in the environment.
 - Recommended next action: Confirm whether the active PR and filing author are aligned before starting a parallel implementation. Investigate the nested parser code path and the PR diff for overlap.
 
 ## 3. Ownership and Existing Work
 
 - Open linked or competing PRs:
-  - `#920` — active PR, author `alice`, not draft, changed files: `src/config/loader.ts`, `tests/config.test.ts`
+  - URL: `https://github.com/example-org/example-cli/pull/920`; number: `#920`; state: open; draft: no.
+  - Author: `alice`; created: `2026-01-15T10:00:00Z`; last updated: `2026-02-01T23:40:00Z`.
+  - Issue reference: `#812` in PR body; relevant comment: illustrative maintainer comment at `https://github.com/example-org/example-cli/issues/812#issuecomment-1002`.
+  - Changed files: `src/config/loader.ts`, `tests/config.test.ts`; both overlap the likely parser/test path.
+  - Relationship: `POSSIBLE_CONFLICT`. The issue and PR describe nested config parsing and touch the likely same files, but this report has not verified whether the PR implements all acceptance criteria.
 - Ownership claims and timestamps:
-  - `alice` comment: “I’m working on this” at `2026-01-12T14:03:00Z`
+  - Author: `alice`; comment URL: `https://github.com/example-org/example-cli/issues/812#issuecomment-1001`; timestamp: `2026-01-12T14:03:00Z`; claim type: explicit work-in-progress statement.
 - Claim freshness and subsequent activity:
-  - Claim is approximately three weeks old and there has been PR activity, so it should be treated as active but not deterministically blocking.
+  - As of the illustrative audit date, the claim is approximately three weeks old and there has been PR activity. Record freshness as `CURRENT`; treat this as active evidence, not conclusive proof of assignment.
 - Previous closed-but-unmerged PRs:
-  - `#731` closed `2025-11-08` after a review comment requested object parsing support and explicit validation.
+  - `#731` closed `2025-11-08` after a review comment requested object parsing support and explicit validation. Illustrative URL: `https://github.com/example-org/example-cli/pull/731`.
 - Review feedback and closure reasons:
-  - Review comments noted the implementation did not handle nested arrays correctly and lacked coverage for invalid input.
+  - Reviewer requested nested-array handling and invalid-input coverage. In this illustrative example, the author added a commit for array handling but did not add invalid-input tests before closure; the closure reason was not recorded, so the attempt is classified as `incomplete`, not automatically rejected. Illustrative review URL: `https://github.com/example-org/example-cli/pull/731#pullrequestreview-1003`.
 - Duplicate and already-resolved evidence:
-  - No evidence of an already-resolved fix in the current codebase; the user should verify current behavior before proceeding.
+  - Linked and unlinked merged PR search, replacement-PR search, follow-up issue search, relevant commit history, and current-code verification were not performed in this illustrative report. Therefore resolution is not established; those checks are still needed before any definitive implementation recommendation.
 
 ## 4. Code-Path Analysis
 
@@ -63,11 +69,11 @@ This file is an illustrative sample only. It does not describe a real repository
 ## 6. Implementation Sequence
 
 1. Confirm whether the active PR is intended to be the canonical solution.
-2. Read the config parser and schema validation logic.
-3. Add a minimal recursive parse fix that preserves current flat-key behavior.
-4. Add nested-key regression tests.
-5. Run focused parser tests.
-6. If needed, validate broader config-related tests.
+2. Coordinate with the contributor or maintainer before planning overlapping changes.
+3. Search merged changes, follow-up issues, commits, and current code to verify the issue is not already resolved.
+4. Only if the overlap and resolution checks support a new attempt, read the config parser and schema validation logic.
+5. Propose a minimal recursive parse fix and regression tests that address any documented prior feedback.
+6. Run focused parser tests, then broader config-related tests if appropriate.
 
 ## 7. Testing Strategy
 
@@ -94,7 +100,7 @@ This file is an illustrative sample only. It does not describe a real repository
 ## 10. Final Readiness Assessment
 
 - `NEEDS CLARIFICATION`
-- The pre-flight verdict shows active or potential competing work, so implementation should not begin before confirming ownership and overlap.
+- The pre-flight verdict shows potential competing work and the search did not establish resolution status. Do not begin overlapping implementation before coordinating and completing the missing resolution checks.
 
 ## 11. Remaining Unknowns
 

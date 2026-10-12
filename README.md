@@ -72,18 +72,31 @@ Each verdict includes:
 - conflicts or blockers
 - recommended next action
 
-## Installation in a compatible Copilot environment
+## Installation
 
-This project is a standalone skill repository and is portable. It is not a web app, service, or target repo-specific plugin.
+Install the skill with Node.js/npm and the Skills CLI, invoked through `npx`. You also need a compatible GitHub Copilot setup.
 
-To install it in a supported Copilot environment:
-- add this repository as a local skill source in a Copilot-compatible environment,
-- or copy the root into a GitHub Copilot skill-compatible location such as `.github/skills/first-pr-finder/` when that layout is supported by the host environment,
-- or use the repository's root as the skill package if your Copilot setup supports repo-based skill discovery.
+```sh
+npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent github-copilot --global
+```
 
-Important: placing `SKILL.md` in an arbitrary folder does not automatically make it available to Copilot. The skill must be installed using the supported mechanism for the target environment.
+The command installs a skill from a repository with `skills add`; `--skill first-pr-finder` selects this skill, `--agent github-copilot` targets GitHub Copilot, and `--global` requests global installation.
 
-## Usage examples
+### Verify installation
+
+```sh
+npx skills list
+```
+
+Check the output for `first-pr-finder`.
+
+### Troubleshooting
+
+Installation alone does not guarantee access to every GitHub issue or pull request. Results depend on the tools, permissions, and API access available to your Copilot environment.
+
+## Usage
+
+Ask your Copilot agent to analyze a GitHub issue, investigate competing pull requests and ownership claims, inspect repository conventions, and produce an evidence-backed implementation plan.
 
 ### Analyze a single issue
 - “Review this issue: https://github.com/owner/repo/issues/123”

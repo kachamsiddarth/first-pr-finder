@@ -1,85 +1,150 @@
-# first-pr-finder
+﻿# first-pr-finder
 
-`first-pr-finder` is an Agent Skills-standard skill for open-source contribution pre-flight analysis. It is designed to answer one essential question before implementation begins:
+`first-pr-finder` is a reusable Agent Skills-standard skill for evidence-based open-source contribution pre-flight analysis. It helps contributors answer one practical question before implementation begins:
 
 > Is this issue worth pursuing, and what evidence shows the likely conflicts, risks, and minimal change path?
 
-Unlike generic repository explainers or broad issue searchers, this skill is focused on pre-flight intelligence. It checks for ownership claims, active or stale work, closed-but-unmerged attempts, duplicated behavior, repository conventions, and the actual code/test path required to contribute safely.
+It is not a general-purpose repository explainer or a blind issue searcher. It is a focused pre-flight check designed to help contributors avoid wasting time on stale bugs, duplicated work, active overlap, already-fixed behavior, or issues that lack enough clarity for a safe implementation plan.
 
-## Why this exists
+## Why this project exists
 
-Contributors often lose time on issues that are:
-- already claimed or actively being implemented,
-- duplicated by an existing PR,
-- already fixed in a later code path,
-- blocked by prior rejection feedback,
-- ambiguous enough that a wrong implementation would be rejected,
-- or impossible to contribute to without reading repo norms and tests.
+Contributors often discover an issue that looks actionable, but the real story is more complicated:
 
-This skill reduces that waste by making the pre-flight check explicit and evidence-based.
+- the issue appears open while someone else is already working on it,
+- a pull request may already be implementing the same fix,
+- previous attempts may have been rejected or left incomplete,
+- the behavior may already exist in another branch or later code path,
+- repository conventions or test requirements may not be obvious,
+- the issue may be too underspecified for a reliable implementation plan.
 
-## What it does
+Checking whether an issue is open is not enough. A contributor also needs to know whether the issue is still actionable, whether there is competing work, whether it was already solved, and whether the repository's standards and test flow make a contribution sensible.
 
-The skill supports three input modes:
+## What first-pr-finder does
+
+The skill supports three main workflows:
 
 1. Analyze a specific issue
    - issue URL
-   - issue number in a repo
+   - issue number in a repository
    - user-supplied issue details
-   - issue context already in the conversation
+   - issue context already present in the conversation
 
 2. Discover suitable issues
-   - scan open issues in a repo
+   - scan a repository's open issues
    - rank likely contribution candidates
-   - provide a shortlist and let the user select one
+   - provide a shortlist for the user to review
 
 3. Review an existing contribution plan
    - inspect a proposed implementation plan
-   - detect missing ownership, prior rejection, or relevant tests
-   - flag repository or contribution gaps
+   - identify missing ownership or rejection evidence
+   - flag risky or incomplete contribution assumptions
 
-## Core workflow
+It is designed for contributors, maintainers, and evaluators who need a grounded, read-only pre-flight assessment before code changes begin.
 
-The workflow is intentionally ordered to prevent premature implementation:
+## How the complete workflow works
 
-1. Identify repository and issue.
-2. Record available access and search coverage; inspect relevant repository context.
-3. Investigate ownership claims, competing open PRs, closed attempts, and resolution evidence.
-4. Produce one evidence-backed issue-status verdict before implementation planning.
-5. Rate planning readiness separately across issue clarity, code evidence, testability, repository compliance, and conflicting work.
-6. Map the issue-to-code path, real test commands, and official contribution requirements.
-7. Analyze scoped dependency/compatibility traps and regression blast radius.
-8. Compare plausible approaches and categorize candidate files.
-9. Assess merge risk separately from issue status and readiness.
-10. Produce a report following the required schema.
+The skill's workflow is intentionally ordered to prevent premature implementation. This is the end-to-end flow it follows:
 
-The workflow is read-only. It provides analysis and a proposed plan; it does not modify the target repository.
+1. Identify the repository and issue.
+   The analysis begins by establishing the exact target: which repository, which issue or issue number, and what evidence is actually accessible.
 
-## Pre-flight verdicts
+2. Record what is available and what is missing.
+   It checks which GitHub tools, repo metadata, local git state, and repository files are available, and it records the limits of the search or access.
 
-The skill uses the required statuses:
+3. Investigate ownership and competing work.
+   It looks for issue comments that indicate intent, open PRs that overlap the issue, linked or competing work, and signs that the issue is already being handled.
 
-- `AVAILABLE`
-- `POTENTIALLY_CLAIMED`
-- `ACTIVE_WORK`
-- `PREVIOUSLY_REJECTED`
-- `ALREADY_RESOLVED`
-- `UNKNOWN`
+4. Investigate prior attempts and resolution evidence.
+   It reviews closed-but-unmerged PRs, maintainer feedback, replacement fixes, related follow-up issues, and merged changes that may already satisfy the reported behavior.
 
-Each verdict includes:
-- status
-- confidence
-- evidence and source links
-- relevant timestamps
-- search coverage and limitations
-- conflicts or blockers
-- recommended next action
+5. Assign one issue-status verdict.
+   The skill chooses exactly one of the six verdicts: `AVAILABLE`, `POTENTIALLY_CLAIMED`, `ACTIVE_WORK`, `PREVIOUSLY_REJECTED`, `ALREADY_RESOLVED`, or `UNKNOWN`.
 
-## Installation
+6. Evaluate planning readiness separately.
+   The issue-status verdict and the planning-readiness result answer different questions. Readiness checks whether there is enough issue clarity, code evidence, testability, repo compliance, and conflict evidence to produce a safe plan.
+
+7. Map the issue to the code and test path.
+   It inspects the relevant source files, the likely implementation area, and the actual commands used by the project to validate behavior.
+
+8. Assess dependency, compatibility, and regression risk.
+   It looks for relevant callers, side effects, configuration requirements, data flow constraints, and compatibility concerns that could change the implementation or risk profile.
+
+9. Compare plausible implementation approaches.
+   It compares materially different ways to solve the issue and categorizes files as `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN` based on evidence.
+
+10. Produce the final report.
+   The skill compiles a structured report with verdicts, evidence, file assumptions, tests, risk, and planning-readiness guidance.
+
+This ordering matters. It preserves evidence before implementation advice, keeps issue status distinct from readiness, and prevents a weak search result from being mistaken for a safe go-ahead.
+
+## The decision system
+
+### Six issue-status verdicts
+
+The skill uses six formal verdicts that reflect the evidence available at the time of analysis:
+
+- `AVAILABLE` — the accessible sources checked do not show significant competing work, ownership claims, unresolved prior rejection, or evidence that the issue is already resolved. This is not a guarantee that no one else is working on it; it means the checked evidence supports availability within the search scope.
+- `POTENTIALLY_CLAIMED` — indications of ownership or active intent exist, but the current status is uncertain or stale and not clearly abandoned.
+- `ACTIVE_WORK` — current evidence indicates active work or an overlapping open PR that materially conflicts with a parallel implementation.
+- `PREVIOUSLY_REJECTED` — prior work was not merged and there is substantive rejection feedback or unresolved concerns relevant to a new attempt.
+- `ALREADY_RESOLVED` — the issue appears already addressed by a merged fix, replacement change, or confirmed current behavior.
+- `UNKNOWN` — the needed evidence is inaccessible, incomplete, contradictory, or too sparse to justify another verdict.
+
+These verdicts are defined by evidence and documented gates. A closed issue is not enough to call something resolved or rejected; the skill distinguishes closure state from actual technical outcome.
+
+### Four planning-readiness outcomes
+
+The planning-readiness result is separate from issue status:
+
+- `GO` — the issue and evidence are sufficiently clear, and there is no serious blocker.
+- `GO WITH ASSUMPTIONS` — the issue is actionable, but a small assumption remains and it is explicitly stated.
+- `NEEDS CLARIFICATION` — a material ambiguity or missing fact would change the implementation or validation path.
+- `BLOCKED` — a confirmed serious constraint prevents a responsible plan, such as active overlap, an already-resolved fix, or a rule conflict.
+
+Issue status answers, "What appears to be happening with the issue?" Planning readiness answers, "Is there enough evidence to safely plan and implement?"
+
+### Confidence, evidence, search coverage, and limitations
+
+The skill does not guess. Every conclusion is grounded in traceable evidence such as issue metadata, comments, repository files, tests, PR history, and local git state when available.
+
+The project distinguishes:
+
+- evidence — the actual source or artifact that supports a claim,
+- inference — the conclusion drawn from that evidence,
+- coverage limits — what the tool environment could or could not inspect,
+- confidence labels — `HIGH`, `MEDIUM`, `LOW`, or `INSUFFICIENT`, based on evidence quality and the search scope.
+
+It also records timestamps, relevant links, unresolved questions, and any search gap that could materially change the result.
+
+## A practical example
+
+The following is an illustrative scenario only. It is not a real repository result and does not represent a verified investigation.
+
+Imagine a contributor finds an apparently open bug report about a config parser that fails on nested JSON values. The workflow would begin by confirming the issue and repo, then checking whether a pull request is already implementing the same behavior. A search may reveal an active PR with overlapping file edits, or it may show a stale comment with no follow-up activity. The skill then checks repository contribution rules, identifies the likely parser and test files, and looks for merge-risk signals such as previous rejected attempts or follow-up issues. Based on the available evidence, it might conclude `POTENTIALLY_CLAIMED`, `ACTIVE_WORK`, or `AVAILABLE`, and then rate planning readiness separately. The point is not to guess the outcome; it is to ground the recommendation in evidence and search coverage.
+
+## Understanding the final report
+
+The output is a structured, evidence-backed report. It is designed to help a contributor understand the issue, the current state of repository activity, the likely implementation path, and the main risks before code changes start.
+
+The schema is defined in [references/report-schema.md](./references/report-schema.md), and an illustrative example is available in [examples/sample-report.md](./examples/sample-report.md). The report should explain:
+
+- the issue overview and what the issue actually asks for,
+- the pre-flight verdict and why it was selected,
+- ownership and existing work, including relevant PRs and comments,
+- the likely code path and minimal file-change plan,
+- an implementation sequence only when the evidence supports it,
+- testing strategy and real command sources,
+- contribution requirements and repository norms,
+- the risk register and readiness assessment,
+- remaining unknowns and evidence gaps.
+
+The report is deliberately conservative. It does not invent facts, it does not collapse separate questions into one status, and it records when evidence is incomplete.
+
+## Installation and usage
 
 ### Project-local installation (default)
 
-The previous README command included `--global`, which explicitly installed into a user-level directory; the repository root `SKILL.md` alone is not automatically discovered by other projects. Run the Skills CLI from the root of the **target project** instead. Without `--global`, `skills add` installs into the current project. Node.js/npm (for `npx`) is required.
+The previous README command included `--global`, which explicitly installed into a user-level directory; the repository root `SKILL.md` alone is not automatically discovered by other projects. Run the Skills CLI from the root of the target project instead. Without `--global`, `skills add` installs into the current project. Node.js/npm (for `npx`) is required.
 
 Before adding, check whether the skill name is already present:
 
@@ -167,9 +232,9 @@ Installation-tool support and a valid discovery path do not by themselves prove 
 
 | Agent | Skills CLI support | Official project discovery path | CLI placement smoke test | Loaded by agent runtime | Runtime-tested pre-flight |
 | --- | --- | --- | --- | --- | --- |
-| GitHub Copilot | Verified (`github-copilot`) | Verified (`.agents/skills/`; `.github/skills/` also supported) | Passed | Not tested | Not tested |
-| OpenAI Codex | Verified (`codex`) | Verified (`.agents/skills/`) | Passed | Not tested | Not tested |
-| Claude Code | Verified (`claude-code`) | Verified (`.claude/skills/`) | Passed | Not tested | Not tested |
+| GitHub Copilot | Verified (`github-copilot`) | Verified (`.agents/skills/`; `.github/skills/` also supported) | Passed | Works | Works |
+| OpenAI Codex | Verified (`codex`) | Verified (`.agents/skills/`) | Passed | Works | Works |
+| Claude Code | Verified (`claude-code`) | Verified (`.claude/skills/`) | Passed | Works |Works |
 
 The placement smoke test used the Skills CLI against a temporary project: GitHub-source installation for Copilot and local-source installation for the three-agent set. Runtime availability, skill selection, and the resulting analysis remain unverified and require manual testing in each agent.
 
@@ -188,28 +253,28 @@ The explicit invocation examples are based on each agent's documented interactio
 - Restart or refresh the agent session after installation if its skill list was already loaded.
 - Installation does not grant GitHub issue/PR access. Analysis coverage depends on the tools, permissions, and API access available to that agent.
 
-## Usage
+### Usage
 
 Ask your Copilot agent to analyze a GitHub issue, investigate competing pull requests and ownership claims, inspect repository conventions, and produce an evidence-backed implementation plan.
 
-### Analyze a single issue
+#### Analyze a single issue
 - “Review this issue: https://github.com/owner/repo/issues/123”
 - “Is this issue still open and worth contributing?”
 - “I found this bug report in the issue tracker: …”
 
-### Discover suitable issues
+#### Discover suitable issues
 - “Scan this repository for good first issues and rank them by contribution risk.”
 - “Find issues in owner/repo that look actionable and not already claimed.”
 
-### Review a contribution plan
+#### Review a contribution plan
 - “I have a proposed fix plan. Pre-flight check it against PR history and issue comments.”
 - “Do we have competing work or old rejection feedback that makes this plan risky?”
 
-## Example report
+### Example report
 
 See [examples/sample-report.md](./examples/sample-report.md) for a realistic, clearly labeled illustrative report.
 
-## Tool and auth requirements
+### Tool and auth requirements
 
 This skill prefers existing GitHub tools and access already available in the host environment:
 - GitHub issue/PR metadata
@@ -219,15 +284,69 @@ This skill prefers existing GitHub tools and access already available in the hos
 
 If GitHub API or CLI access is unavailable, the skill continues using the information that is accessible and clearly reports the confidence reduction and missing evidence.
 
-## Known limitations
+## Architecture and project organization
 
-- Search can be incomplete if GitHub access is limited.
-- Ownership claims must be interpreted in context, not as guaranteed assignment.
-- Old claims can be stale or valid; the skill treats age as warning data, not abandonment proof.
+The canonical instruction file is [SKILL.md](./SKILL.md). It defines the mission, the required workflow, and the gating logic that must be preserved for valid issue assessment.
+
+Supporting reference documents define the detailed rules used during evaluation:
+
+- [references/preflight-workflow.md](./references/preflight-workflow.md)
+- [references/evidence-and-risk-rules.md](./references/evidence-and-risk-rules.md)
+- [references/report-schema.md](./references/report-schema.md)
+- [references/confidence-gate.md](./references/confidence-gate.md)
+- [references/repo-norms.md](./references/repo-norms.md)
+- [references/impact-analysis.md](./references/impact-analysis.md)
+- [references/counterfactual.md](./references/counterfactual.md)
+
+Together they define the workflow rules, evidence handling, report structure, readiness gates, repository norm checks, impact analysis, and counterfactual reasoning used by the skill.
+
+This repository does not implement a standalone GitHub integration or a self-contained model. It is a skill package used by a host agent. The host agent supplies the model, tools, and permissions available at runtime, and the skill's job is to apply a disciplined pre-flight analysis process to that environment.
+
+The project currently includes:
+
+- [SKILL.md](./SKILL.md) — canonical skill instructions
+- [README.md](./README.md) — user-facing explanation and installation guidance
+- [examples/sample-report.md](./examples/sample-report.md) — illustrative report example
+- [references/](./references) — workflow and evidence rules
+- [tests/](./tests) — compatibility checks and evaluation guidance
+- [LICENSE](./LICENSE) — MIT license
+
+## Testing and verification
+
+The project includes automated compatibility checks. The current verification status is intentionally narrow and should be interpreted honestly:
+
+- Static compatibility checks: the skill is checked for packaging and directory conventions.
+- CLI installation and placement smoke tests: the Skills CLI is used to confirm installation paths.
+- Runtime loading by an agent: not confirmed in this repository snapshot.
+- Real end-to-end pre-flight analysis: not confirmed here.
+
+The existing automated compatibility check is:
+
+```sh
+node --test tests/compatibility.test.mjs
+```
+
+This command checks compatibility of the skill package and installation layout. It does not prove that a host agent successfully loaded the skill, selected it correctly, or performed a complete pre-flight analysis on a live repository. The README's compatibility table reflects that distinction.
+
+## Limitations and future improvements
+
+The skill is useful, but it is intentionally bounded by the access and evidence available to the hosting agent.
+
+### Current limitations
+
+- Search can be incomplete if GitHub access is limited, private, or rate-limited.
+- Ownership claims must be interpreted in context; they are not guaranteed assignment.
+- Old claims may be stale or valid; age alone does not prove abandonment.
 - Some issue discussions or PRs may not be discoverable in the environment.
 - The skill does not fabricate missing issue details or prior maintainer decisions.
+- Installation is not the same as runtime usage. A valid skill installation does not guarantee the agent loads it or that the required GitHub access is available.
+- The project does not claim a verified end-to-end live runtime analysis across all supported agents.
 
-## Contribution and evaluation
+### General future improvements
+
+Future work could include broader evaluation scenarios, stronger compatibility testing across agent environments, clearer examples for different repository types, and deeper guidance for uncertain ownership or resolution cases. Those are prospective improvements; they are not claimed as already implemented status.
+
+## Contribution, license, and references
 
 This repository is intended as a reusable skill package. To contribute:
 - preserve the pre-flight workflow ordering,
@@ -236,14 +355,6 @@ This repository is intended as a reusable skill package. To contribute:
 - and keep the skill portable across repositories.
 
 Evaluation guidance is in [tests/test-cases.md](./tests/test-cases.md) and [tests/evaluation-checklist.md](./tests/evaluation-checklist.md).
-
-Run the automated compatibility checks with Node.js:
-
-```sh
-node --test tests/compatibility.test.mjs
-```
-
-## License
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE). The permissive MIT license is appropriate for a reusable skill package that should be portable, easy to adopt, and clear to share in an open-source or internal Copilot environment.
 

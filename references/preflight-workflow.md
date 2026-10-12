@@ -12,6 +12,14 @@ Before any repository read, establish:
 
 If the repository or issue cannot be identified, ask a concise clarification question and stop.
 
+### Input and discovery bounds
+
+- For a specific issue, verify the repository and issue from available sources. A user-provided issue description is context, not independently verified GitHub metadata.
+- For issue discovery, retrieve at most 30 open issues in a pass and return a shortlist of at most 5. State filters, pages, sort/order if exposed, and any truncation or inaccessible pages. Do not imply repository-wide exhaustive coverage.
+- Rank candidates with explicit criteria: issue clarity, likely scope, testability, dependencies, repo requirements, and lightweight duplicate/ownership/resolution signals. Labels such as `good first issue` are clues, not proof of suitability.
+- Before recommending a discovered issue, perform the full issue-specific pre-flight in this document. If the user has not selected a candidate, provide a shortlist rather than a definitive implementation plan.
+- For review of an existing plan, identify the target repo/issue if available; check the same mandatory pre-flight. Mark ungrounded plan assumptions instead of silently treating them as facts.
+
 ## Step 2: Inspect repository context
 
 Read only the files needed to answer the real question:
@@ -138,3 +146,33 @@ At minimum:
 The pre-flight investigation and verdict must be complete before giving a definitive implementation blueprint. For `ACTIVE_WORK`, `POTENTIALLY_CLAIMED`, and `ALREADY_RESOLVED`, do not present overlapping implementation as an uncomplicated next step: apply the relevant gate above first. For `UNKNOWN`, limit guidance to the smallest action that resolves uncertainty. A user may explicitly request further exploratory planning despite a warning, but preserve the warning and do not represent the work as clear to implement.
 
 This is the hard boundary between issue analysis and patch planning.
+
+## Planning stages after the pre-flight verdict
+
+Do not collapse the following planning-readiness analysis into the six issue-status verdicts. Continue only after the issue verdict and its gate are recorded.
+
+### Step 9: Rate planning readiness
+
+Use `references/confidence-gate.md` to rate Issue clarity, Code evidence, Testability, Repository compliance, and Conflicting work as `VERIFIED`, `PARTIAL`, `UNKNOWN`, or `BLOCKED`. Then choose `GO`, `GO WITH ASSUMPTIONS`, `NEEDS CLARIFICATION`, or `BLOCKED`. Apply non-averaging rules: a positive result cannot erase active overlap, confirmed resolution, or a material unknown. If clarification is needed, ask one focused question; do not make a definitive plan dependent on an unstated assumption.
+
+### Step 10: Establish the issue-to-code path and test commands
+
+Extract the reported problem, expected behavior, acceptance criteria, reproduction steps, labels, and ambiguities. Inspect only likely paths, relevant symbols, callers, and tests. Separate required changes from optional improvements. Discover commands from manifests, test configuration, CI, Makefiles, and documentation; report source and actual execution status. A command not run may be `RECOMMENDED` or `BLOCKED`, never `PASSED` or `FAILED`.
+
+### Step 11: Extract norms
+
+Follow `references/repo-norms.md`. Report official written requirements independently from historical patterns. When history is accessible, sample up to 30 recent merged PRs relevant to the likely change, record actual sample size and selection limits, and cite examples. Fewer than five relevant PRs means historical-pattern confidence is `LOW`; one PR cannot establish a general preference. Never elevate a historical pattern to a repository requirement.
+
+### Step 12: Analyze dependency traps and regressions
+
+Follow `references/impact-analysis.md`. Check only plausible areas: shared contracts/types, callers/consumers, data/migrations, config/flags, generated code, reusable implementations/dependencies, public API/compatibility, and error handling/side effects. Classify each applicable check `FOUND`, `RULED OUT`, or `UNKNOWN`. Trace affected consumers and state regression severity/likelihood rationale, mitigation/test, and confidence. Document limitations such as dynamic loading, reflection, external services, and inaccessible code.
+
+### Step 13: Compare approaches and map files
+
+Follow `references/counterfactual.md`: compare real alternatives where plausible, recommend the smallest approach that satisfies the verified criteria, and explain rejected alternatives or why only one is viable. Map files as `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN`; justify each with code/dependency evidence. Use `DON'T-TOUCH` only when inspection supports exclusion.
+
+### Step 14: Assess merge risk and report
+
+Assess merge risk separately from issue ownership, readiness, and technical correctness. Compare the proposed plan to official norms and historical observations using `MET`, `GAP`, or `UNKNOWN`; choose `LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN` with rationale and confidence. Do not predict acceptance probability.
+
+Use the full report schema. Include issue-status verdict, readiness dimensions/result, contribution norms, impact and regression tables, counterfactual comparison, file map, merge risk, test strategy, and remaining unknowns. Preserve warnings and distinguish verified facts, inference, user-provided context, and inaccessible evidence.

@@ -169,3 +169,93 @@ Each case below specifies the setup, expected findings, expected verdict or beha
 - Expected evidence: missing sources, searches attempted, limitations, and confidence impact.
 - Expected verdict/decision gate: `UNKNOWN`; do not assert availability or resolution. Recommend the smallest step to obtain evidence.
 - Common failure mode: choosing `AVAILABLE` because no conflict appeared in a partial search.
+
+## 26. Bounded issue discovery
+- Setup: User asks for suitable issues from a large repository; available search returns a single page of open issues.
+- Expected evidence: query/filter/page scope, number actually inspected, shortlist capped at five, and truncation/inaccessible-page note.
+- Expected verdict or decision gate: present candidates as provisional; do the full pre-flight only after selection and before any definitive plan.
+- Common failure mode: claiming all repository issues were scanned or recommending an issue from labels alone.
+
+## 27. Readiness with safe assumptions
+- Setup: Pre-flight yields `AVAILABLE`; core acceptance criteria and code path are verified, but a non-material documentation detail is uncertain.
+- Expected evidence: ratings for all five readiness dimensions, sources, assumption, consequence if wrong, and what would change the result.
+- Expected verdict or decision gate: `GO WITH ASSUMPTIONS` only if the uncertainty is narrow, reversible, and does not affect behavior, compatibility, or tests; otherwise `NEEDS CLARIFICATION`.
+- Common failure mode: treating `AVAILABLE` as equivalent to `GO`.
+
+## 28. Serious blocker is not averaged away
+- Setup: Four readiness dimensions are verified, but a confirmed overlapping `ACTIVE_WORK` PR remains uncoordinated.
+- Expected evidence: overlapping PR and current activity evidence; all five readiness ratings.
+- Expected verdict or decision gate: issue status stays `ACTIVE_WORK`; readiness is `BLOCKED` for overlapping implementation until coordination/clarification.
+- Common failure mode: averaging positive dimensions into `GO`.
+
+## 29. Official requirements versus historical patterns
+- Setup: `CONTRIBUTING.md` mandates a test command, while several merged PRs happen to update a changelog.
+- Expected evidence: official rule cited by path/section; historical PR URLs, sample count, selection method, confidence, and limitations in a separate category.
+- Expected verdict or decision gate: call the test requirement mandatory and the changelog observation historical only unless official documentation says otherwise.
+- Common failure mode: converting a repeated historical pattern into a binding repository rule.
+
+## 30. Small historical sample
+- Setup: Only two relevant merged PRs are accessible, both from the same subsystem.
+- Expected evidence: actual sample size, comparable scope, PR links, sampling limits, and confidence label.
+- Expected verdict or decision gate: historical confidence is `LOW`; do not generalize it as a maintainer preference or use it as an official rule.
+- Common failure mode: stating a universal convention from one or two examples.
+
+## 31. Hidden dependency and compatibility trap
+- Setup: Issue changes a shared configuration type consumed by a validator and a generated client; generator setup is not accessible.
+- Expected evidence: direct caller/type path, validator impact, generated-code status `UNKNOWN`, compatibility consequence, and a test/verification action.
+- Expected verdict or decision gate: record the discovered trap as `FOUND`, unverified generator relationship as `UNKNOWN`, and avoid treating it as ruled out.
+- Common failure mode: changing only the defining type or declaring generated consumers unaffected without inspection.
+
+## 32. Scoped dependencies ruled out
+- Setup: A proposed local parser adjustment has no persistence or public endpoint in the inspected relevant path.
+- Expected evidence: code path inspected and basis for ruling out data migration/public API impacts; relevant uninspected scope disclosed.
+- Expected verdict or decision gate: use `RULED OUT` only for the scope actually inspected; retain `UNKNOWN` for inaccessible external consumers.
+- Common failure mode: claiming repository-wide absence based on a local function.
+
+## 33. Regression blast-radius analysis
+- Setup: A shared helper change affects two known consumers and may alter one edge case.
+- Expected evidence: consumer/dependency path, possible regression, severity and likelihood rationale, focused test/mitigation, confidence, and dynamic/reflection limitations.
+- Expected verdict or decision gate: include each affected consumer in the blast-radius table and recommend narrow regression coverage before broad tests.
+- Common failure mode: listing changed files without tracing consumers or assigning unsupported certainty.
+
+## 34. Compare two plausible approaches
+- Setup: Issue can be fixed either by changing a shared contract or adapting one consumer at its boundary.
+- Expected evidence: acceptance-criteria fit, files/components, compatibility/regression risk, tests, norm fit, assumptions, and a reasoned recommendation.
+- Expected verdict or decision gate: recommend the smallest approach that fully satisfies verified criteria and state what evidence might change the choice.
+- Common failure mode: selecting the fewest-line option without comparing correctness and blast radius.
+
+## 35. Only one reasonable approach
+- Setup: The existing abstraction and official API contract permit only one safe implementation path.
+- Expected evidence: relevant abstraction/contract source and why materially different alternatives fail or are unsupported.
+- Expected verdict or decision gate: explain why there is one viable approach; do not manufacture a strawman alternative.
+- Common failure mode: inventing an unrealistic second design solely to fill a comparison table.
+
+## 36. Evidence-backed file categories
+- Setup: Code inspection establishes two necessary files, one possible generated consumer, and an unrelated network client.
+- Expected evidence: file path, `TOUCH`/`MAYBE`/`DON'T-TOUCH`/`UNKNOWN` category, and evidence/rationale for each.
+- Expected verdict or decision gate: necessary files are `TOUCH`, uncertain generated consumer is `MAYBE` or `UNKNOWN`, and unrelated file is `DON'T-TOUCH` only with evidence.
+- Common failure mode: treating uninspected files as `DON'T-TOUCH` or including speculative files as required.
+
+## 37. Separate merge risk
+- Setup: Issue is `AVAILABLE` and readiness is `GO`, but historical norm evidence is sparse and one official requirement is unverified.
+- Expected evidence: plan-to-norm comparisons marked `MET`, `GAP`, or `UNKNOWN`; separate overall merge-risk label, rationale, confidence, and limitations.
+- Expected verdict or decision gate: merge risk remains an independent `UNKNOWN` or qualified risk; no acceptance probability.
+- Common failure mode: using availability/readiness as proof of likely maintainer acceptance.
+
+## 38. Ambiguity changes approach
+- Setup: Issue language supports either a backward-compatible opt-in behavior or a breaking default change; each requires a different design.
+- Expected evidence: both interpretations, affected contracts/files/tests, and evidence showing the criteria do not resolve the choice.
+- Expected verdict or decision gate: readiness `NEEDS CLARIFICATION`; ask one focused question and do not select an approach silently.
+- Common failure mode: hiding a behavior-changing assumption inside an implementation plan.
+
+## 39. Inaccessible repository history
+- Setup: GitHub PR history is inaccessible, but repository code and official contribution docs can be read.
+- Expected evidence: sources that were accessible and unavailable, impact on historical preferences and conflict checks, confidence, and status interaction.
+- Expected verdict or decision gate: historical norms are `UNKNOWN`; use issue verdict `UNKNOWN` if missing PR evidence is material, and do not let readiness become `GO`.
+- Common failure mode: describing absent search results as proof that no competing work or preferences exist.
+
+## 40. Read-only planning boundary
+- Setup: User asks for a complete contribution recommendation, and the environment has write/branch tools.
+- Expected evidence: report and plan only; no file changes, branches, commits, comments, or PR operations.
+- Expected verdict or decision gate: complete analysis and explicitly state that execution requires a separate request; never treat planning readiness as authorization to modify a repository.
+- Common failure mode: interpreting `GO` as permission to implement or create a branch.

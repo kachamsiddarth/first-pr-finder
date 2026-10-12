@@ -99,8 +99,14 @@ Illustrative audit date: `2026-02-03`.
 
 ## 10. Final Readiness Assessment
 
-- `NEEDS CLARIFICATION`
-- The pre-flight verdict shows potential competing work and the search did not establish resolution status. Do not begin overlapping implementation before coordinating and completing the missing resolution checks.
+- Dimensions (illustrative):
+  - Issue clarity: `PARTIAL` — acceptance criteria do not define mixed flat/nested key behavior.
+  - Code evidence: `VERIFIED` — the illustrative parser path is identified in the sample repository.
+  - Testability: `PARTIAL` — a focused test command is found, but no test was executed.
+  - Repository compliance: `PARTIAL` — illustrative README and PR-template requirements are known; other history is not.
+  - Conflicting work: `PARTIAL` — one open PR overlaps, while merged-fix coverage remains incomplete.
+- Overall result: `NEEDS CLARIFICATION`
+- The issue verdict is `POTENTIALLY_CLAIMED`; confirm ownership and resolution coverage before any overlapping implementation. Clarify the accepted nested/flat input behavior before selecting a parser change.
 
 ## 11. Remaining Unknowns
 
@@ -109,3 +115,62 @@ Illustrative audit date: `2026-02-03`.
 - Whether there are additional config loaders or runtime paths left uninspected.
 
 This sample remains illustrative and is not a verified repository finding.
+
+## 12. Planning-readiness evidence
+
+All facts in this sample are illustrative, not verified against a real repository. The ratings above are dimension-by-dimension, not averaged. The open-PR and issue-history search was partial, so the uncertainty is material. A user/maintainer answer about mixed key behavior and additional GitHub evidence could change the readiness result.
+
+## 13. Repository norms
+
+| Requirement or pattern | Evidence | Type | Applicability/confidence |
+| --- | --- | --- | --- |
+| Include an issue reference in a PR description | `CONTRIBUTING.md` (illustrative) | Official requirement | Applies; source must be checked in the target repository |
+| Add focused tests for config changes | Illustrative merged PRs #812 and #845 | Historical pattern, not a requirement | Sample size: 2; `LOW`; examples may not be representative |
+| Check changelog convention | No accessible evidence in this illustrative example | Unknown | Verify before implementation |
+
+## 14. Dependency and regression impact
+
+### Dependency and compatibility checks
+
+| Area/status | Evidence/path | Consequence | Mitigation/test | Confidence |
+| --- | --- | --- | --- | --- |
+| Shared config contract — `FOUND` | Illustrative `ConfigNode` is consumed by parser and validator | A shape change could affect validation | Add parser/validator compatibility tests | `MEDIUM` |
+| Generated code — `UNKNOWN` | Generator configuration was not accessible | Generated parser types could diverge | Check generator and generated-source policy | `LOW` |
+| Database, flags, public API, side effects — `RULED OUT` only for inspected parser scope | Illustrative local parser path has no observed persistence or public endpoint | No identified impact in this inspected scope | Recheck if wider callers are found | `LOW` |
+
+### Regression blast radius
+
+| Consumer | Evidence/dependency path | Potential regression | Severity/likelihood rationale | Test/mitigation | Confidence |
+| --- | --- | --- | --- | --- | --- |
+| Config validator | Parser output is passed to validator (illustrative code evidence) | Nested keys could be rejected or normalized incorrectly | `MEDIUM`; shared output shape is involved, likelihood uncertain | Focused parser-to-validator regression test | `MEDIUM` |
+| External plugin consumers | Not inspected | Compatibility break cannot be ruled out | `UNKNOWN` | Search public API usage and plugin docs | `LOW` |
+
+Static inspection may miss dynamic loader paths and external consumers; these are explicitly unverified in this illustration.
+
+## 15. Counterfactual approach comparison
+
+| Approach | Fit and affected scope | Risk/testing | Decision |
+| --- | --- | --- | --- |
+| Extend the existing recursive parser | Could satisfy nested behavior while preserving the current parser entry point; likely limited to parser and focused tests | Verify validator compatibility and malformed input behavior | Preferred only if maintainers confirm nested input is intended |
+| Add a separate normalization layer | Could preserve parser behavior while adapting nested config at a boundary | Adds another transformation path and may duplicate validation | Not selected in this illustration because no evidence establishes a separate boundary |
+
+Recommended approach remains conditional. The missing acceptance detail could change the recommendation; clarify it before a definitive blueprint.
+
+## 16. File map
+
+| Category | File | Evidence and rationale |
+| --- | --- | --- |
+| `TOUCH` | `src/config/parser.ts` (illustrative) | Likely implementation path from inspected parser symbol |
+| `TOUCH` | `tests/config.test.ts` (illustrative) | Focused regression test path |
+| `MAYBE` | `src/config/validator.ts` (illustrative) | Shared parser output consumer; inspect compatibility before deciding |
+| `UNKNOWN` | `src/generated/config-types.ts` (illustrative) | Generator status/policy was inaccessible |
+| `DON'T-TOUCH` | `src/network/client.ts` (illustrative) | Inspected path does not participate in local config parsing |
+
+## 17. Merge risk
+
+| Norm | Status | Evidence and limitation |
+| --- | --- | --- |
+| Issue reference in PR description | `UNKNOWN` | Target repository `CONTRIBUTING.md` must be verified; sample statement is illustrative |
+| Focused config regression tests | `MET` as a historical pattern only | Two illustrative merged PRs; weak sample, not a mandatory rule |
+
+Overall merge risk: `UNKNOWN` (`LOW` confidence). The illustrative evidence is too limited to estimate conformity. This is not an acceptance probability and does not alter the `POTENTIALLY_CLAIMED` issue verdict or `NEEDS CLARIFICATION` readiness result.

@@ -69,18 +69,21 @@ Required fields:
 
 Required fields:
 - file path
+- file classification: `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN`
 - confidence
 - proposed change
 - rationale
 - evidence
 
-A table is recommended.
+A table is recommended. `TOUCH` means supported as needed for the recommended approach; `MAYBE` means plausible but unverified; `DON'T-TOUCH` requires evidence that the file is unrelated or unnecessary; use `UNKNOWN` when access or dependency evidence is insufficient. Separate required edits from optional improvements.
 
 ## 6. Implementation Sequence
 
 Required fields:
 - ordered, actionable steps
 - dependencies between steps
+
+Only provide implementation steps when the issue verdict and readiness gates permit them. For `ACTIVE_WORK`, `ALREADY_RESOLVED`, `UNKNOWN`, or material `POTENTIALLY_CLAIMED` cases, give only the appropriate coordination, verification, or clarification steps; do not disguise a blocked implementation plan as an implementation sequence.
 
 ## 7. Testing Strategy
 
@@ -99,10 +102,9 @@ Allowed execution statuses:
 ## 8. Contribution Requirements
 
 Required fields:
-- mandatory PR conventions
-- repository-specific requirements
-- recommendations
-- source paths
+- official mandatory requirements and recommendations, each with source path/section and applicability
+- historical maintainer patterns in a separate table, with relevant PR URLs, actual sample size, selection limits, confidence, and explicit statement that patterns are not requirements
+- inaccessible or absent sources
 
 ## 9. Risk Register
 
@@ -121,12 +123,12 @@ Allowed severities:
 
 ## 10. Final Readiness Assessment
 
-Required values:
-- `READY TO IMPLEMENT`
-- `NEEDS CLARIFICATION`
-- `BLOCKED`
+Required fields:
+- Five dimensions—Issue clarity, Code evidence, Testability, Repository compliance, Conflicting work—each rated `VERIFIED`, `PARTIAL`, `UNKNOWN`, or `BLOCKED`, with concise evidence and limitations.
+- Overall result: `GO`, `GO WITH ASSUMPTIONS`, `NEEDS CLARIFICATION`, or `BLOCKED`.
+- Any assumptions, why they are safe or material, what would change the result, and the next action.
 
-The verdict should connect directly to the pre-flight status and evidence quality.
+Apply `references/confidence-gate.md`. Do not average away serious blockers. The readiness result is distinct from the issue-status verdict and cannot override it.
 
 Apply these gates: `ALREADY_RESOLVED` must not lead to a recommendation to reimplement the same fix; `ACTIVE_WORK` requires coordination or clarification before overlapping work; `POTENTIALLY_CLAIMED` requires communicating the uncertainty and checking with the claimant or maintainer; `PREVIOUSLY_REJECTED` requires explaining what must change; `UNKNOWN` must not assert availability or resolution; `AVAILABLE` must state checked sources and coverage limits.
 
@@ -136,6 +138,42 @@ Required fields:
 - unanswered questions
 - inaccessible evidence
 - assumptions requiring validation
+
+## 12. Planning-readiness evidence
+
+Required content:
+- the five dimension ratings and evidence, as described in Section 10
+- actual repository/test discovery scope
+- any issue interpretation that requires maintainer/user clarification
+
+Do not treat supplied issue text as independently verified metadata. Keep fact, inference, and user-provided context distinct.
+
+## 13. Repository norms
+
+Required fields:
+- official written requirements versus recommendations, each linked to its repository source
+- historical patterns separately, with PR examples, sample size/selection method, confidence, and limitations
+- explicit `UNKNOWN` for inaccessible history or rules
+
+Historical patterns are not binding requirements. Up to 30 recent relevant merged PRs may be sampled where accessible; disclose the actual count. Fewer than five relevant examples means historical confidence is `LOW`.
+
+## 14. Dependency and regression impact
+
+Include a scoped check for applicable classes: shared contracts/types; callers/consumers; data/migrations; config/environment/flags; generated code; reusable implementations/dependencies; public API/compatibility; error handling/side effects. Each class is `FOUND`, `RULED OUT`, or `UNKNOWN` with evidence and rationale.
+
+For each material trap, state consequence, mitigation/test, confidence, and uncertainty. Include a regression blast-radius table with affected consumer, evidence/dependency path, possible regression, severity/likelihood rationale, recommended test/mitigation, and confidence. State dynamic/reflection, external-service, generated-code, or access limitations where relevant.
+
+## 15. Counterfactual approach comparison
+
+Compare materially distinct approaches when plausible. For each, summarize acceptance-criteria fit, files/components affected, compatibility and regression risks, testing, repo-norm fit, and assumptions. Recommend the smallest approach that fully satisfies verified requirements; cite why alternatives were rejected or why only one is reasonable. State what evidence could change the recommendation. If ambiguity changes the approach, use `NEEDS CLARIFICATION`.
+
+## 16. File map
+
+List relevant inspected and candidate files under `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN`, with evidence and rationale. Coordinate the map with the recommended approach and impact analysis. Never label a file `DON'T-TOUCH` solely because it was not investigated.
+
+## 17. Merge risk
+
+Assess plan conformity separately for each applicable official norm or historical pattern as `MET`, `GAP`, or `UNKNOWN`, with evidence. Provide overall merge risk `LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN`, rationale, confidence, and limitations. Do not give acceptance probabilities or conflate merge risk with issue availability, readiness, or technical correctness.
 
 ## Rules for missing or unverified information
 

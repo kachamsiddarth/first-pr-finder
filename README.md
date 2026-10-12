@@ -43,14 +43,17 @@ The skill supports three input modes:
 The workflow is intentionally ordered to prevent premature implementation:
 
 1. Identify repository and issue.
-2. Recon repository rules, code paths, and tests.
-3. Investigate ownership claims and existing PRs.
-4. Check stale or prior attempts and resolved issues.
-5. Produce a verdict before implementation planning.
-6. Map the likely code path and minimal change plan.
-7. Discover actual test commands.
-8. Extract contribution requirements and risk.
-9. Produce a report following the required schema.
+2. Record available access and search coverage; inspect relevant repository context.
+3. Investigate ownership claims, competing open PRs, closed attempts, and resolution evidence.
+4. Produce one evidence-backed issue-status verdict before implementation planning.
+5. Rate planning readiness separately across issue clarity, code evidence, testability, repository compliance, and conflicting work.
+6. Map the issue-to-code path, real test commands, and official contribution requirements.
+7. Analyze scoped dependency/compatibility traps and regression blast radius.
+8. Compare plausible approaches and categorize candidate files.
+9. Assess merge risk separately from issue status and readiness.
+10. Produce a report following the required schema.
+
+The workflow is read-only. It provides analysis and a proposed plan; it does not modify the target repository.
 
 ## Pre-flight verdicts
 
@@ -152,3 +155,7 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE). The pe
 - [references/preflight-workflow.md](./references/preflight-workflow.md)
 - [references/evidence-and-risk-rules.md](./references/evidence-and-risk-rules.md)
 - [references/report-schema.md](./references/report-schema.md)
+- [references/confidence-gate.md](./references/confidence-gate.md)
+- [references/repo-norms.md](./references/repo-norms.md)
+- [references/impact-analysis.md](./references/impact-analysis.md)
+- [references/counterfactual.md](./references/counterfactual.md)

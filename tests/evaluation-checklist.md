@@ -4,8 +4,12 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 
 ## Pre-flight ordering
 - [ ] The skill confirms repo and issue context before inspecting code.
+- [ ] User-supplied issue details are distinguished from independently verified GitHub facts.
+- [ ] Issue discovery is bounded to at most 30 open issues per pass and a shortlist of at most 5; actual scope and truncation are disclosed.
 - [ ] The skill does not jump directly from issue URL to file-level patch suggestions.
 - [ ] The verdict is produced before an implementation blueprint or patch recommendation.
+- [ ] Planning-readiness assessment occurs only after the issue-status verdict.
+- [ ] Implementation steps are withheld when the issue-status or readiness gate blocks them; only coordination, verification, or clarification actions are given.
 
 ## Ownership detection
 - [ ] The skill searches issue comments for explicit or implicit ownership signals.
@@ -44,7 +48,8 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 
 ## File mapping accuracy
 - [ ] Relevant files are identified from repository evidence, not guessed.
-- [ ] Files are classified as required, optional, or merely inspected.
+- [ ] Candidate files use `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN` with evidence and rationale.
+- [ ] `DON'T-TOUCH` is not assigned solely because a file was not investigated.
 - [ ] Proposed file changes are limited to the smallest plausible path.
 
 ## Implementation plan quality
@@ -61,6 +66,41 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 - [ ] CONTRIBUTING.md, AGENTS.md, and README rules are inspected when present.
 - [ ] Missing convention files are called out as missing, not assumed.
 - [ ] Mandatory requirements and recommendations are separated.
+- [ ] Official written rules are distinct from historical merged-PR patterns.
+- [ ] Historical pattern claims cite relevant PRs, actual sample size, selection method, confidence, and limitations.
+- [ ] Fewer than five relevant historical examples yields `LOW` confidence; history is never presented as binding policy.
+- [ ] Confidence uses `HIGH`, `MEDIUM`, `LOW`, or `INSUFFICIENT`; `UNKNOWN` is used for missing evidence/status, not as a confidence label.
+
+## Planning-readiness gate
+- [ ] Issue clarity, Code evidence, Testability, Repository compliance, and Conflicting work each receive `VERIFIED`, `PARTIAL`, `UNKNOWN`, or `BLOCKED`, with evidence.
+- [ ] Overall readiness is one of `GO`, `GO WITH ASSUMPTIONS`, `NEEDS CLARIFICATION`, or `BLOCKED`.
+- [ ] `UNKNOWN` is not confused with `BLOCKED`; inaccessible evidence is described and its materiality is assessed.
+- [ ] A serious blocker cannot be averaged away by other positive dimensions.
+- [ ] `ACTIVE_WORK` blocks overlapping implementation until coordination/clarification.
+- [ ] `ALREADY_RESOLVED` blocks reimplementation of the same fix.
+- [ ] `POTENTIALLY_CLAIMED` does not yield `GO` for overlapping work until ownership uncertainty is addressed.
+- [ ] `PREVIOUSLY_REJECTED` identifies unresolved feedback and what a new attempt changes.
+- [ ] `AVAILABLE` is not treated as equivalent to readiness `GO`.
+- [ ] `GO WITH ASSUMPTIONS` states narrow assumption, consequence if wrong, and evidence that would change the result.
+- [ ] Material behavior/scope ambiguity produces `NEEDS CLARIFICATION` and one focused question rather than a silent choice.
+
+## Dependency and regression analysis
+- [ ] Plausible shared contracts/types, callers/consumers, data/migrations, configuration/flags, generated code, reusable implementations/dependencies, public API/compatibility, and error handling/side effects are considered within relevant scope.
+- [ ] Each applicable impact class is `FOUND`, `RULED OUT`, or `UNKNOWN` with evidence; `RULED OUT` is not used without inspection.
+- [ ] Found traps state consequence and a test/mitigation; uncertain paths remain explicitly unknown.
+- [ ] Regression blast radius names affected consumers, evidence/dependency path, possible regression, severity/likelihood rationale, test/mitigation, and confidence.
+- [ ] Dynamic loading, reflection, generated/runtime wiring, external services, and inaccessible scope limitations are disclosed when relevant.
+
+## Counterfactual and file-map quality
+- [ ] Materially plausible approaches are compared against acceptance criteria, changed components, compatibility/regression risk, testing, repo norms, and assumptions.
+- [ ] The recommended approach is the smallest that fully satisfies verified requirements, not merely the fewest-line change.
+- [ ] Rejected alternatives and evidence that could change the recommendation are stated.
+- [ ] If only one reasonable approach exists, the evidence explains why; no strawman alternative is added.
+
+## Merge risk separation
+- [ ] Plan-to-norm comparisons use `MET`, `GAP`, or `UNKNOWN` with evidence.
+- [ ] Overall merge risk is `LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN`, with rationale, confidence, and limitations.
+- [ ] Merge risk is separate from issue ownership, readiness, technical correctness, and acceptance probability.
 
 ## Risk assessment quality
 - [ ] Risks include severity, evidence, impact, and mitigation.
@@ -95,8 +135,11 @@ Use this checklist to evaluate whether the skill is behaving correctly.
 
 ## Output consistency
 - [ ] The required report sections remain present.
+- [ ] Report includes readiness evidence, repo norms, impact/blast radius, counterfactual, file map, and merge risk.
 - [ ] The skill preserves warnings and does not quietly erase them.
 - [ ] The final readiness assessment matches the pre-flight verdict and evidence quality.
+- [ ] Test statuses and all issue/PR facts are claimed only when actual evidence exists.
+- [ ] Skill remains read-only by default; readiness does not authorize edits, branches, commits, comments, or PRs.
 
 ## Final sign-off
 - [ ] The project includes required documentation and references.

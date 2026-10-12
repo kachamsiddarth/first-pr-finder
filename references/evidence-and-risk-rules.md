@@ -31,6 +31,8 @@ Examples:
 - `LOW`: only weak or partial signals are available.
 - `INSUFFICIENT`: accessible evidence is too sparse to draw a conclusion.
 
+Confidence is not a verdict or readiness status. For historical repository patterns, use `HIGH`, `MEDIUM`, `LOW`, or `INSUFFICIENT`; fewer than five relevant examples caps confidence at `LOW`.
+
 ## Search limitations
 
 If the search or access was partial, say so explicitly. Do not claim exhaustive detection if the environment only inspected a subset of the repository or GitHub data.
@@ -143,3 +145,21 @@ The skill must not:
 If the evidence suggests a claim, duplicate, or rejection risk, the report should clearly preserve that warning and explain the risk before recommending implementation.
 
 This is a core safety rule of the skill.
+
+## Separate planning-readiness gate
+
+After assigning exactly one issue-status verdict, evaluate the five dimensions—Issue clarity, Code evidence, Testability, Repository compliance, and Conflicting work—as `VERIFIED`, `PARTIAL`, `UNKNOWN`, or `BLOCKED`. Then choose an overall result: `GO`, `GO WITH ASSUMPTIONS`, `NEEDS CLARIFICATION`, or `BLOCKED`. These values are not replacements for or aliases of the six issue-status verdicts. Apply the detailed definitions and non-averaging decision rules in `references/confidence-gate.md`.
+
+An overall `BLOCKED` result is required for a material confirmed barrier, including an overlapping `ACTIVE_WORK` situation before coordination, a duplicate plan for `ALREADY_RESOLVED`, or a confirmed non-compliant approach with no compliant alternative. `UNKNOWN` is not automatically a blocker, but a material unknown cannot support `GO`. `POTENTIALLY_CLAIMED` requires resolving uncertainty before an overlapping `GO`; `PREVIOUSLY_REJECTED` requires a documented changed approach addressing the feedback. Readiness never upgrades `UNKNOWN` to `AVAILABLE`.
+
+## Repository norms and merge risk
+
+Official written requirements and historical merged-PR patterns are separate evidence classes. Cite official rules by source. Cite historical examples and sample size; patterns are observations, never requirements. Use `MET`, `GAP`, or `UNKNOWN` for each applicable plan-to-norm comparison. Merge risk is a separate `LOW`, `MEDIUM`, `HIGH`, or `UNKNOWN` judgment with rationale and confidence, not an acceptance probability and not the issue verdict.
+
+## Impact, alternatives, and file-map evidence
+
+For scoped dependency/compatibility checks, use `FOUND`, `RULED OUT`, or `UNKNOWN`; only use `RULED OUT` where inspection supports exclusion. For impacted consumers, state the dependency path, possible regression, severity/likelihood rationale, mitigation or test, and confidence. Name static-analysis and access limitations.
+
+Compare materially distinct implementation approaches when supported by evidence. Recommend the smallest approach that satisfies verified acceptance criteria; do not manufacture alternatives. If ambiguity changes the recommended behavior or scope, use `NEEDS CLARIFICATION`.
+
+Categorize candidate files as `TOUCH`, `MAYBE`, `DON'T-TOUCH`, or `UNKNOWN`. `TOUCH` requires evidence that the file is needed; `MAYBE` records plausible but unverified impact; `DON'T-TOUCH` requires a reasoned exclusion; `UNKNOWN` is appropriate where access or dependency tracing is incomplete.

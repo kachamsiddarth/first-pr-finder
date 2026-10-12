@@ -176,16 +176,9 @@ The required report sections are:
 
 When information cannot be verified, explicitly say that instead of inventing a fact.
 
-## Installation and repository portability
+## Portability
 
-This project is a standalone skill repository. It is portable and does not depend on any one target repository.
-
-To install in a compatible Copilot environment:
-- use the repository as a local skill source in a Copilot-enabled IDE or custom skill registry,
-- or place this repository in a location that your Copilot environment recognizes as a skill package,
-- or copy the root directory into a `.github/skills/first-pr-finder/` layout in a repo that supports GitHub Copilot skill discovery.
-
-Do not assume that placing a single `SKILL.md` file in an arbitrary folder makes the skill available everywhere. The skill must be installed through the supported Copilot skill mechanism for the host environment.
+This skill uses standard `name` and `description` metadata and repository-relative references. Agent installation and discovery instructions belong in the project README; do not infer support for an agent from its ability to accept an installation command.
 
 ## Known limitations
 

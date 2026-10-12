@@ -60,9 +60,8 @@ Illustrative audit date: `2026-02-03`.
 
 ## 5. Minimal File-Change Plan
 
-| File path | Confidence | Proposed change | Rationale | Evidence |
-| --- | --- | --- | --- | --- |
-| Classification | File path | Confidence | Proposed change or verification | Rationale | Evidence |
+| Category | File path | Confidence | Proposed change | Rationale | Evidence |
+| --- | --- | --- | --- | --- | --- |
 | `TOUCH` | `src/config/loader.ts` | `MEDIUM` | Add recursive handling for nested JSON while preserving flat-key behavior, subject to readiness gates. | The illustrative parser path is the likely implementation point. | Illustrative issue criteria and inspected parser behavior |
 | `TOUCH` | `tests/config.test.ts` | `MEDIUM` | Add nested-input regression coverage and test invalid input if required by verified criteria. | Existing illustrative tests cover flat keys only. | Illustrative test-file inspection |
 | `MAYBE` | `src/config/schema.ts` | `LOW` | Verify whether schema normalization must change; do not edit unless evidence shows it is needed. | It may reject nested values after parsing. | Illustrative parser-to-schema path; schema behavior requires confirmation |

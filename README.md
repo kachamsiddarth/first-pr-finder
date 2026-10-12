@@ -1,6 +1,6 @@
 # first-pr-finder
 
-`first-pr-finder` is a GitHub Copilot Agent Skill for open-source contribution pre-flight analysis. It is designed to answer one essential question before implementation begins:
+`first-pr-finder` is an Agent Skills-standard skill for open-source contribution pre-flight analysis. It is designed to answer one essential question before implementation begins:
 
 > Is this issue worth pursuing, and what evidence shows the likely conflicts, risks, and minimal change path?
 
@@ -77,25 +77,116 @@ Each verdict includes:
 
 ## Installation
 
-Install the skill with Node.js/npm and the Skills CLI, invoked through `npx`. You also need a compatible GitHub Copilot setup.
+### Project-local installation (default)
+
+The previous README command included `--global`, which explicitly installed into a user-level directory; the repository root `SKILL.md` alone is not automatically discovered by other projects. Run the Skills CLI from the root of the **target project** instead. Without `--global`, `skills add` installs into the current project. Node.js/npm (for `npx`) is required.
+
+Before adding, check whether the skill name is already present:
 
 ```sh
-npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent github-copilot --global
+npx skills list --agent github-copilot
 ```
 
-The command installs a skill from a repository with `skills add`; `--skill first-pr-finder` selects this skill, `--agent github-copilot` targets GitHub Copilot, and `--global` requests global installation.
+If an existing `first-pr-finder` is listed, inspect its source first. Use `npx skills update first-pr-finder --project` only when it is already the installation from this repository; do not confirm an add over an unrelated skill with the same name. The install commands below stay interactive (they do not pass `--yes`) so the CLI can present any confirmation.
 
-### Verify installation
+Install into all three agents:
 
 ```sh
-npx skills list
+npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent github-copilot codex claude-code --copy
 ```
 
-Check the output for `first-pr-finder`.
+Or install for one agent at a time:
+
+```sh
+npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent github-copilot --copy
+npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent codex --copy
+npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent claude-code --copy
+```
+
+The `--copy` option places project-local copies in the selected agent discovery directories. The GitHub-source install records its source in `skills-lock.json` for later CLI updates. The canonical instructions remain in this repository's root `SKILL.md`; do not edit installed copies directly.
+
+The source argument and install destination are different: the current working directory is the target project, while `kachamsiddarth/first-pr-finder` identifies the source repository. From a target project, `npx skills add .` means “use this current directory as the source”; it does not fetch this GitHub repository. For development against a local clone, pass its absolute path as the package source while keeping the target project's root as the current directory:
+
+PowerShell:
+
+```powershell
+npx skills add 'C:\path\to\first-pr-finder' --skill first-pr-finder --agent github-copilot --copy
+```
+
+macOS/Linux:
+
+```sh
+npx skills add /path/to/first-pr-finder --skill first-pr-finder --agent github-copilot --copy
+```
+
+The GitHub source command and an absolute local-source command were smoke-tested from a separate project directory. Both installed into that target, not into the source repository. The local-path smoke test did not create `skills-lock.json`; to refresh a local-source install after editing the clone, re-run its same `skills add <local-path> ... --copy` command from the target project root, and review any CLI confirmation rather than using `--yes`.
+
+### Update, verify, and remove
+
+From the target project root, update the tracked project-local installation after upstream changes:
+
+```sh
+npx skills update first-pr-finder --project
+```
+
+This `update` path applies to the GitHub-source installation recorded by the CLI. For a local clone source, use the re-add procedure above.
+
+Verify the CLI's project installation and the native discovery file:
+
+```sh
+npx skills list --agent github-copilot
+```
+
+Expected project paths:
+
+| Agent | Project-local `SKILL.md` |
+| --- | --- |
+| GitHub Copilot | `.agents/skills/first-pr-finder/SKILL.md` |
+| OpenAI Codex | `.agents/skills/first-pr-finder/SKILL.md` |
+| Claude Code | `.claude/skills/first-pr-finder/SKILL.md` |
+
+Copilot also recognizes `.github/skills/` as a project skill root, but the tested Skills CLI installation targets `.agents/skills/` for Copilot. To remove all project-local copies for this skill, run from the same project root:
+
+```sh
+npx skills remove --skill first-pr-finder
+```
+
+Omitting `--global` removes only the project-local installation. Copilot and Codex share the `.agents/skills/` discovery directory, so removing from only one of those targets can affect both.
+
+### Optional global installation
+
+Global installation is an alternative for sharing the skill across projects on one machine. It is not the default and is not needed for project-local discovery:
+
+```sh
+npx skills add kachamsiddarth/first-pr-finder --skill first-pr-finder --agent github-copilot --global --copy
+```
+
+### Agent compatibility and verification status
+
+Installation-tool support and a valid discovery path do not by themselves prove that an agent loaded or correctly followed a skill. Status below reflects official directory documentation and CLI placement smoke tests performed on 2026-10-12. GitHub Copilot Agent mode and Codex executables were not available; Claude Code is installed, but a live authenticated skill session was not run. No runtime load or end-to-end pre-flight test has been confirmed.
+
+| Agent | Skills CLI support | Official project discovery path | CLI placement smoke test | Loaded by agent runtime | Runtime-tested pre-flight |
+| --- | --- | --- | --- | --- | --- |
+| GitHub Copilot | Verified (`github-copilot`) | Verified (`.agents/skills/`; `.github/skills/` also supported) | Passed | Not tested | Not tested |
+| OpenAI Codex | Verified (`codex`) | Verified (`.agents/skills/`) | Passed | Not tested | Not tested |
+| Claude Code | Verified (`claude-code`) | Verified (`.claude/skills/`) | Passed | Not tested | Not tested |
+
+The placement smoke test used the Skills CLI against a temporary project: GitHub-source installation for Copilot and local-source installation for the three-agent set. Runtime availability, skill selection, and the resulting analysis remain unverified and require manual testing in each agent.
+
+### Agent-specific invocation
+
+- **GitHub Copilot Agent mode:** Ask Copilot to “Use the `first-pr-finder` skill to pre-flight [issue URL] in [repository].” Copilot can also select skills automatically when the task matches the skill description.
+- **Codex CLI or IDE extension:** Select/mention `$first-pr-finder` (or use `/skills` to inspect available skills), then provide the issue and repository.
+- **Claude Code:** Invoke `/first-pr-finder`, then provide the issue and repository.
+
+The explicit invocation examples are based on each agent's documented interaction model; they have not been tested in live agent sessions.
 
 ### Troubleshooting
 
-Installation alone does not guarantee access to every GitHub issue or pull request. Results depend on the tools, permissions, and API access available to your Copilot environment.
+- If the skill is not listed, confirm the command was run from the target repository root and check the expected path above.
+- If there is a same-name skill conflict, inspect its origin before updating, removing, or installing; do not use `--yes` to bypass that check.
+- Restart or refresh the agent session after installation if its skill list was already loaded.
+- Installation does not grant GitHub issue/PR access. Analysis coverage depends on the tools, permissions, and API access available to that agent.
 
 ## Usage
 
@@ -146,6 +237,12 @@ This repository is intended as a reusable skill package. To contribute:
 
 Evaluation guidance is in [tests/test-cases.md](./tests/test-cases.md) and [tests/evaluation-checklist.md](./tests/evaluation-checklist.md).
 
+Run the automated compatibility checks with Node.js:
+
+```sh
+node --test tests/compatibility.test.mjs
+```
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE). The permissive MIT license is appropriate for a reusable skill package that should be portable, easy to adopt, and clear to share in an open-source or internal Copilot environment.
@@ -159,3 +256,11 @@ This project is licensed under the MIT License. See [LICENSE](./LICENSE). The pe
 - [references/repo-norms.md](./references/repo-norms.md)
 - [references/impact-analysis.md](./references/impact-analysis.md)
 - [references/counterfactual.md](./references/counterfactual.md)
+
+## Agent and CLI documentation checked
+
+- [Skills CLI documentation](https://github.com/vercel-labs/skills#cli-reference) and [agent target paths](https://github.com/vercel-labs/skills#supported-agents)
+- [GitHub Copilot agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) and [adding skills](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills)
+- [OpenAI Codex skills](https://developers.openai.com/codex/skills/)
+- [Claude Code skills](https://code.claude.com/docs/en/skills)
+- [Agent Skills specification](https://agentskills.io/specification)
